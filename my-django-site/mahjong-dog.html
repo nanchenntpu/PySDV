@@ -1,0 +1,601 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="麻將狗是免費的麻將對局紀錄工具，協助固定牌友管理房間、記錄分數與查看戰績走勢。">
+  <title>麻將狗｜麻將計分與對局紀錄</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --paper: #f8f6f1;
+      --ink: #30343b;
+      --muted: #777b82;
+      --blue: #3268d7;
+      --line: #e6e3dc;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: system-ui, -apple-system,
+        "Noto Sans TC", sans-serif;
+    }
+
+    .container-custom {
+      max-width: 1120px;
+      margin: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 28px;
+      background: var(--blue);
+      color: white;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: background .2s, transform .2s;
+    }
+
+    .cta:hover {
+      background: #2455bb;
+      transform: translateY(-2px);
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 25px;
+      height: 100%;
+      min-width: 0;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 244px;
+      height: 345px;
+      margin: 0 auto 28px;
+      background: #fafafa;
+      border: 7px solid #30343b;
+      border-radius: 29px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,.08);
+    }
+
+    .phone-top {
+      width: 75px;
+      height: 13px;
+      margin: 0 auto 12px;
+      background: #30343b;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .phone-content {
+      padding: 0 13px;
+      font-size: 11px;
+    }
+
+    .mock-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #e9e9e9;
+    }
+
+    .mock-pill {
+      display: inline-block;
+      background: #eaf0ff;
+      color: #3268d7;
+      border-radius: 20px;
+      padding: 4px 9px;
+      font-size: 10px;
+    }
+
+    .mock-panel {
+      background: white;
+      border: 1px solid #ececec;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      background: #eaf0ff;
+      color: #3268d7;
+      font-weight: bold;
+    }
+
+    .carousel-viewport {
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform .35s ease;
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      padding: 3px;
+      box-sizing: border-box;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #c9cbd0;
+      transition: width .2s, background .2s;
+    }
+
+    .carousel-dot.active {
+      width: 25px;
+      border-radius: 8px;
+      background: var(--blue);
+    }
+
+    .carousel-arrow {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 50%;
+      font-size: 20px;
+    }
+
+    .carousel-arrow:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      margin-bottom: 18px;
+      background: #eaf0ff;
+      color: var(--blue);
+      border-radius: 50%;
+      font-weight: 700;
+    }
+
+    @media (min-width: 768px) {
+      .carousel-viewport {
+        overflow: visible;
+      }
+
+      .carousel-track {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        transform: none !important;
+      }
+
+      .carousel-slide {
+        padding: 0;
+      }
+
+      .carousel-controls {
+        display: none !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .carousel-track, .cta { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 導覽列 -->
+  <header class="border-b border-[#e6e3dc]">
+    <nav class="container-custom flex items-center justify-between h-20">
+      <a href="#" class="text-xl font-bold tracking-tight">
+        麻將狗<span class="text-[#3268d7]">.</span>
+      </a>
+      <span class="text-xs text-gray-500">免費對局紀錄工具</span>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="container-custom text-center pt-28 pb-32 md:pt-40 md:pb-44">
+      <p class="eyebrow mb-7">MAHJONG DOG</p>
+
+      <h1 class="text-4xl md:text-6xl font-bold tracking-tight leading-tight">
+        麻將計分與<br class="md:hidden">對局紀錄
+      </h1>
+
+      <p class="mt-7 text-base md:text-xl text-gray-500 leading-relaxed">
+        紀錄每一場的對局結果，追蹤你的戰績
+      </p>
+
+      <button class="cta mt-10" data-scroll-steps>
+        開始使用 →
+      </button>
+
+      <p class="mt-5 text-xs text-gray-400">
+        免費使用 · 專注分數紀錄 · 不涉及金錢交易
+      </p>
+    </section>
+
+    <!-- 痛點 -->
+    <section class="border-y border-[#e6e3dc] bg-white/60 py-24">
+      <div class="container-custom text-center max-w-3xl">
+        <p class="eyebrow mb-5">THE PROBLEM</p>
+        <h2 class="text-3xl md:text-4xl font-bold leading-snug">
+          還在用紙筆或記憶算分？
+        </h2>
+        <p class="mt-7 text-gray-500 leading-8">
+          紙筆容易遺失，記事本難以整理，
+          Excel 每次都要重新輸入。
+          當對局越來越多，想回頭確認分數、
+          比較牌友表現或查看長期走勢，
+          往往得花不少時間翻找紀錄。
+          麻將狗讓這些事情變得簡單。
+        </p>
+      </div>
+    </section>
+
+    <!-- 核心功能 -->
+    <section class="container-custom py-28" id="features">
+      <div class="text-center mb-14">
+        <p class="eyebrow mb-4">FEATURES</p>
+        <h2 class="text-3xl md:text-4xl font-bold">
+          讓每一場對局都有紀錄
+        </h2>
+        <p class="mt-5 text-gray-500">
+          從計分、房間到分析，一個地方就能管理。
+        </p>
+      </div>
+
+      <div class="carousel-viewport" id="carouselViewport">
+        <div class="carousel-track" id="carouselTrack">
+
+          <!-- 卡片 1：計分追蹤 -->
+          <article class="carousel-slide">
+            <div class="feature-card">
+              <div class="phone">
+                <div class="phone-top"></div>
+                <div class="phone-content">
+                  <div class="flex justify-between items-center mb-4">
+                    <strong class="text-sm">本場對局</strong>
+                    <span class="mock-pill">已完成</span>
+                  </div>
+
+                  <div class="mock-panel">
+                    <div class="text-gray-400 mb-2">對局分數</div>
+                    <div class="mock-row">
+                      <span>小明</span>
+                      <strong class="text-green-600">+120</strong>
+                    </div>
+                    <div class="mock-row">
+                      <span>小華</span>
+                      <strong class="text-red-500">-50</strong>
+                    </div>
+                    <div class="mock-row">
+                      <span>小美</span>
+                      <strong class="text-green-600">+80</strong>
+                    </div>
+                    <div class="mock-row">
+                      <span>小強</span>
+                      <strong class="text-red-500">-150</strong>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 bg-[#3268d7] text-white text-center rounded-lg py-3">
+                    儲存本場紀錄
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-xl font-bold mb-3">計分追蹤</h3>
+              <p class="text-gray-500 text-sm leading-7">
+                快速記錄每位玩家的分數，
+                保留每一場對局結果，
+                不必再翻找紙本紀錄。
+              </p>
+            </div>
+          </article>
+
+          <!-- 卡片 2：房間管理 -->
+          <article class="carousel-slide">
+            <div class="feature-card">
+              <div class="phone">
+                <div class="phone-top"></div>
+                <div class="phone-content">
+                  <div class="flex justify-between items-center mb-4">
+                    <strong class="text-sm">我的房間</strong>
+                    <span class="mock-pill">2 個房間</span>
+                  </div>
+
+                  <div class="mock-panel">
+                    <strong class="text-xs">週末麻將團</strong>
+                    <p class="text-gray-400 mt-1">固定牌友 · 4 人</p>
+
+                    <div class="flex gap-2 mt-4">
+                      <div class="avatar">明</div>
+                      <div class="avatar">華</div>
+                      <div class="avatar">美</div>
+                      <div class="avatar">強</div>
+                    </div>
+
+                    <div class="mock-row mt-3">
+                      <span class="text-gray-500">累計對局</span>
+                      <strong>28 場</strong>
+                    </div>
+                  </div>
+
+                  <div class="mock-panel">
+                    <strong class="text-xs">星期三牌友會</strong>
+                    <p class="text-gray-400 mt-2">固定牌友 · 4 人</p>
+                    <div class="mock-row">
+                      <span class="text-gray-500">累計對局</span>
+                      <strong>12 場</strong>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 text-center text-[#3268d7] font-semibold">
+                    ＋ 建立新房間
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-xl font-bold mb-3">房間管理</h3>
+              <p class="text-gray-500 text-sm leading-7">
+                為不同牌友群組建立房間，
+                管理參與玩家，
+                讓每個群組的對局紀錄清楚分開。
+              </p>
+            </div>
+          </article>
+
+          <!-- 卡片 3：走勢分析 -->
+          <article class="carousel-slide">
+            <div class="feature-card">
+              <div class="phone">
+                <div class="phone-top"></div>
+                <div class="phone-content">
+                  <div class="flex justify-between items-center mb-4">
+                    <strong class="text-sm">戰績分析</strong>
+                    <span class="mock-pill">最近 7 場</span>
+                  </div>
+
+                  <div class="mock-panel">
+                    <p class="text-gray-400 mb-1">累積分數</p>
+                    <strong class="text-2xl text-[#3268d7]">+320</strong>
+                    <p class="text-green-600 mt-1">近期走勢向上</p>
+
+                    <svg viewBox="0 0 220 125"
+                         class="w-full mt-5"
+                         role="img"
+                         aria-label="示意戰績折線圖">
+                      <line x1="5" y1="25" x2="215" y2="25"
+                            stroke="#e5e7eb"/>
+                      <line x1="5" y1="65" x2="215" y2="65"
+                            stroke="#e5e7eb"/>
+                      <line x1="5" y1="105" x2="215" y2="105"
+                            stroke="#e5e7eb"/>
+                      <polyline
+                        points="10,95 43,80 76,91 109,55 142,64 175,35 208,18"
+                        fill="none"
+                        stroke="#3268d7"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                      <circle cx="208" cy="18" r="5" fill="#3268d7"/>
+                    </svg>
+
+                    <div class="flex justify-between text-gray-400">
+                      <span>第 1 場</span>
+                      <span>第 7 場</span>
+                    </div>
+                  </div>
+
+                  <div class="mock-panel">
+                    <div class="mock-row">
+                      <span>總對局數</span>
+                      <strong>28</strong>
+                    </div>
+                    <div class="mock-row">
+                      <span>平均每場分數</span>
+                      <strong class="text-green-600">+11.4</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-xl font-bold mb-3">走勢分析</h3>
+              <p class="text-gray-500 text-sm leading-7">
+                透過簡單的折線圖，
+                觀察累積分數與歷次表現，
+                更容易了解自己的對局走勢。
+              </p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- 手機輪播控制 -->
+      <div class="carousel-controls flex md:hidden items-center justify-center gap-6 mt-8">
+        <button id="prevBtn" class="carousel-arrow"
+                aria-label="上一張功能卡片">‹</button>
+
+        <div id="carouselDots" class="flex gap-2 items-center"
+             aria-label="輪播位置">
+          <button class="carousel-dot active" data-slide="0"
+                  aria-label="顯示計分追蹤"></button>
+          <button class="carousel-dot" data-slide="1"
+                  aria-label="顯示房間管理"></button>
+          <button class="carousel-dot" data-slide="2"
+                  aria-label="顯示走勢分析"></button>
+        </div>
+
+        <button id="nextBtn" class="carousel-arrow"
+                aria-label="下一張功能卡片">›</button>
+      </div>
+    </section>
+
+    <!-- 三步驟 -->
+    <section id="steps" class="bg-white border-y border-[#e6e3dc] py-28 scroll-mt-8">
+      <div class="container-custom">
+        <div class="text-center mb-16">
+          <p class="eyebrow mb-4">GET STARTED</p>
+          <h2 class="text-3xl md:text-4xl font-bold">
+            三步驟開始使用
+          </h2>
+          <p class="mt-5 text-gray-500">
+            不需要複雜設定，輕鬆整理每場對局。
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-12 md:gap-8">
+          <div>
+            <div class="step-number">01</div>
+            <h3 class="text-xl font-bold mb-3">建立房間</h3>
+            <p class="text-gray-500 leading-7">
+              為固定牌友建立專屬房間，
+              設定參與玩家。
+            </p>
+          </div>
+
+          <div>
+            <div class="step-number">02</div>
+            <h3 class="text-xl font-bold mb-3">記錄分數</h3>
+            <p class="text-gray-500 leading-7">
+              每場結束後輸入玩家分數，
+              保存完整對局結果。
+            </p>
+          </div>
+
+          <div>
+            <div class="step-number">03</div>
+            <h3 class="text-xl font-bold mb-3">查看分析</h3>
+            <p class="text-gray-500 leading-7">
+              查看歷史紀錄與戰績走勢，
+              了解長期表現。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部 CTA -->
+    <section class="container-custom py-32 text-center">
+      <p class="eyebrow mb-5">READY TO START?</p>
+      <h2 class="text-3xl md:text-5xl font-bold leading-tight">
+        準備好開始記錄了嗎？
+      </h2>
+      <p class="text-gray-500 mt-6">
+        讓每場麻將對局，都留下清楚的紀錄。
+      </p>
+      <button class="cta mt-9" data-scroll-steps>
+        開始使用 →
+      </button>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-[#e6e3dc] py-8">
+    <div class="container-custom flex flex-col md:flex-row gap-3
+                justify-between items-center text-sm text-gray-400">
+      <span>© 麻將狗 Mahjong Dog</span>
+      <span>免費分數紀錄工具 · 不提供金錢交易服務</span>
+    </div>
+  </footer>
+
+  <script>
+    // 所有 CTA 按鈕捲動到三步驟區塊
+    document.querySelectorAll("[data-scroll-steps]")
+      .forEach(function(button) {
+        button.addEventListener("click", function() {
+          document.getElementById("steps").scrollIntoView({
+            behavior: window.matchMedia(
+              "(prefers-reduced-motion: reduce)"
+            ).matches ? "auto" : "smooth",
+            block: "start"
+          });
+        });
+      });
+
+    // 手機版功能卡片輪播
+    const track = document.getElementById("carouselTrack");
+    const slides = Array.from(track.children);
+    const dots = Array.from(
+      document.querySelectorAll(".carousel-dot")
+    );
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      currentSlide = Math.max(
+        0,
+        Math.min(index, slides.length - 1)
+      );
+
+      track.style.transform =
+        `translateX(-${currentSlide * 100}%)`;
+
+      dots.forEach(function(dot, i) {
+        const active = i === currentSlide;
+        dot.classList.toggle("active", active);
+        dot.setAttribute("aria-current", active ? "true" : "false");
+      });
+
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+    }
+
+    prevBtn.addEventListener("click", function() {
+      showSlide(currentSlide - 1);
+    });
+
+    nextBtn.addEventListener("click", function() {
+      showSlide(currentSlide + 1);
+    });
+
+    dots.forEach(function(dot, index) {
+      dot.addEventListener("click", function() {
+        showSlide(index);
+      });
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}麻將戰績簿{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>麻將戰績簿</h1>
+
+        <nav>
+            <a href="{% url 'hello' %}">戰績首頁</a>
+            <a href="{% url 'players' %}">玩家名單</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>我的第一個 Django 麻將戰績網站</p>
+    </footer>
+</body>
+
+</html>

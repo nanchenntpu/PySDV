@@ -1,0 +1,18 @@
+
+{% extends "core/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ title }}</h2>
+
+<p>歡迎來到我的第一個 Django 網站！</p>
+
+<p>課程名稱：{{ course }}</p>
+
+<p>目前共有 {{ player_count }} 位玩家。</p>
+
+<p>這個網站用來記錄麻將玩家與戰績。</p>
+
+{% endblock %}

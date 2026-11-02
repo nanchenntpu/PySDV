@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h2>玩家名單</h2>
+
+<p>目前共有 {{ players|length }} 位玩家。</p>
+
+<ul>
+    {% for player in players %}
+    <li>
+        <a href="{% url 'player_detail' player.id %}">
+            {{ player.name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

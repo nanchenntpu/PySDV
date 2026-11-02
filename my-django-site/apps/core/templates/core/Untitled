@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+
+{% block title %}關於本站{% endblock %}
+
+{% block content %}
+
+<h2>關於本站</h2>
+
+<p>歡迎來到我的第一個 Django 網站！</p>
+
+<p>這個網站用來記錄麻將玩家與戰績。</p>
+
+<p>目前正在學習 Django 的 URL、View 與 Template。</p>
+
+{% endblock %}

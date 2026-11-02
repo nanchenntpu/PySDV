@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<h2>今日玩家戰績</h2>
+
+<table>
+    <tr>
+        <th>玩家</th>
+        <th>分數</th>
+    </tr>
+
+    {% for player in players %}
+    <tr>
+        <td>{{ player.name }}</td>
+
+        <td>
+            {% if player.score > 0 %}
+                <span class="positive">
+                    +{{ player.score }}
+                </span>
+
+            {% elif player.score < 0 %}
+                <span class="negative">
+                    {{ player.score }}
+                </span>
+
+            {% else %}
+                <span class="zero">
+                    0
+                </span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

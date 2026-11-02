@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ player.name }} - 麻將戰績簿{% endblock %}
+
+{% block content %}
+
+<h2>玩家個人資料</h2>
+
+<p>玩家編號：{{ player.id }}</p>
+<p>玩家姓名：{{ player.name }}</p>
+
+<p>
+    目前分數：
+
+    {% if player.score > 0 %}
+        <span class="positive">+{{ player.score }}</span>
+    {% elif player.score < 0 %}
+        <span class="negative">{{ player.score }}</span>
+    {% else %}
+        <span class="zero">0</span>
+    {% endif %}
+</p>
+
+<a href="{% url 'players' %}">返回玩家名單</a>
+
+{% endblock %}

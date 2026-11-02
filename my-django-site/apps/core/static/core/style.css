@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+}
+
+h1 {
+    color: purple;
+}
+
+table {
+    border-collapse: collapse;
+    width: 400px;
+}
+
+th, td {
+    border: 1px solid gray;
+    padding: 10px;
+    text-align: center;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+.zero {
+    color: gray;
+}
